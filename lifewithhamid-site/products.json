@@ -1,0 +1,10 @@
+{
+  "budget-tracker": {
+    "name": "Dubai Budget Tracker",
+    "format": "Google Sheets Template",
+    "description": "Pre-loaded with Dubai-specific categories — rent & annual cheque planning, DEWA, Salik, RTA fines, school fees, gratuity savings — plus a net-worth dashboard.",
+    "priceId": "price_1ULSoVIf9u8PqZL2HRml3fuZ",
+    "priceDisplay": "$19.00",
+    "accessUrl": "https://docs.google.com/spreadsheets/d/REPLACE_WITH_YOUR_TEMPLATE_ID/copy"
+  }
+}

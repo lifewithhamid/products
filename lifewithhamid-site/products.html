@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Products — Life With Hamid</title>
+  <meta name="description" content="Digital templates and guides on Dubai personal finance, credit, and business setup." />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="/"><span class="mark">&#9654;</span>LIFE WITH <span class="accent">HAMID</span></a>
+      <nav>
+        <a href="/products.html">Products</a>
+        <a href="/contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" style="padding-top: 0;">
+      <div class="eyebrow">Life With Hamid</div>
+      <h1>Products</h1>
+      <p>Downloadable templates and guides. Delivered instantly after purchase.</p>
+    </section>
+
+    <div class="grid" id="product-grid">
+      <!-- Product cards are rendered by script below from products.json -->
+    </div>
+  </main>
+
+  <footer>
+    <div>&copy; 2026 Life With Hamid. All rights reserved.</div>
+    <div>
+      <a href="/privacy-policy.html">Privacy Policy</a>
+      <a href="/refund-policy.html">Refund Policy</a>
+      <a href="/terms-of-service.html">Terms of Service</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+  </footer>
+
+  <script>
+    async function loadProducts() {
+      const res = await fetch('/products.json');
+      const products = await res.json();
+      const grid = document.getElementById('product-grid');
+      grid.innerHTML = '';
+
+      Object.entries(products).forEach(([slug, p]) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${p.name}</h3>
+          <div class="muted">${p.format}</div>
+          <p>${p.description}</p>
+          <div class="price">${p.priceDisplay}</div>
+          <button class="btn" data-slug="${slug}">Buy now</button>
+        `;
+        grid.appendChild(card);
+      });
+
+      grid.querySelectorAll('button[data-slug]').forEach((btn) => {
+        btn.addEventListener('click', () => startCheckout(btn.dataset.slug, btn));
+      });
+    }
+
+    async function startCheckout(slug, btn) {
+      btn.disabled = true;
+      btn.textContent = 'Redirecting…';
+      try {
+        const res = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slug }),
+        });
+        const data = await res.json();
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          throw new Error(data.error || 'Could not start checkout');
+        }
+      } catch (err) {
+        alert('Something went wrong starting checkout. Please try again or contact support.');
+        btn.disabled = false;
+        btn.textContent = 'Buy now';
+      }
+    }
+
+    loadProducts();
+  </script>
+</body>
+</html>
